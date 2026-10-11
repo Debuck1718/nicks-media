@@ -1,7 +1,7 @@
 ---
 import { timingSafeEqual } from "node:crypto";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { sanityConfigured, urlFor } from "@/lib/sanity";
+import { sanityConfigured, urlFor, fileUrlFor } from "@/lib/sanity";
 
 // Render on demand (Vercel Function) rather than pre-rendering.
 //
@@ -61,7 +61,7 @@ const date = story.publishedAt
     })
   : "";
 
-// Render Sanity portable-text blocks into plain paragraphs, headings and images.
+// Render Sanity portable-text blocks into plain paragraphs, headings, images, and videos.
 function renderBlock(block) {
   if (block._type !== "block") return "";
   const text = (block.children || []).map((c) => c.text).join("");
@@ -72,14 +72,57 @@ function renderBlock(block) {
     default: return `<p>${text}</p>`;
   }
 }
+
+function getEmbedUrl(rawUrl) {
+  if (!rawUrl) return null;
+  try {
+    const u = new URL(rawUrl);
+    // YouTube
+    if (u.hostname.includes("youtube.com")) {
+      const v = u.searchParams.get("v");
+      if (v) return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(v)}`;
+      if (u.pathname.startsWith("/embed/")) return rawUrl;
+    }
+    if (u.hostname.includes("youtu.be")) {
+      const id = u.pathname.slice(1);
+      if (id) return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}`;
+    }
+    // Vimeo
+    if (u.hostname.includes("vimeo.com")) {
+      const match = u.pathname.match(/\/(\d+)/);
+      if (match) return `https://player.vimeo.com/video/${match[1]}`;
+    }
+  } catch {}
+  return null;
+}
+
+function renderVideo(block) {
+  const isUpload = block.source === "upload";
+  const fileSrc = isUpload && block.file ? fileUrlFor(block.file) : null;
+  const embedSrc = !isUpload && block.url ? getEmbedUrl(block.url) : null;
+  const captionHtml = block.caption ? `<figcaption>${block.caption}${block.credit ? ` <span class="video-credit">(${block.credit})</span>` : ""}</figcaption>` : block.credit ? `<figcaption><span class="video-credit">${block.credit}</span></figcaption>` : "";
+
+  if (fileSrc) {
+    return `<figure class="story-video story-video-file"><video controls preload="metadata" playsinline src="${fileSrc}"></video>${captionHtml}</figure>`;
+  }
+  if (embedSrc) {
+    return `<figure class="story-video story-video-embed"><div class="video-wrapper"><iframe src="${embedSrc}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>${captionHtml}</figure>`;
+  }
+  return "";
+}
+
 const bodyHtml = (story.body || [])
-  .map((b) =>
-    b._type === "image" && b.asset
-      ? `<figure><img src="${urlFor(b)}" alt="${b.alt || ""}" loading="lazy" />${
-          b.credit ? `<figcaption>${b.credit}</figcaption>` : ""
-        }</figure>`
-      : renderBlock(b),
-  )
+  .map((b) => {
+    if (b._type === "image" && b.asset) {
+      return `<figure><img src="${urlFor(b)}" alt="${b.alt || ""}" loading="lazy" />${
+        b.credit ? `<figcaption>${b.credit}</figcaption>` : ""
+      }</figure>`;
+    }
+    if (b._type === "videoEmbed") {
+      return renderVideo(b);
+    }
+    return renderBlock(b);
+  })
   .join("");
 ---
 

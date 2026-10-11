@@ -3,13 +3,22 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "sanity dev",
     "build": "sanity build",
     "deploy": "sanity deploy"
   },
   "dependencies": {
-    "@sanity/vision": "^3.66.0",
-    "sanity": "^3.66.0"
+    "@sanity/vision": "^6.18.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sanity": "^6.18.0",
+    "styled-components": "^6.5.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
   }
 }

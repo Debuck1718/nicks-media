@@ -93,6 +93,10 @@ export default {
             { name: "credit", title: "Credit", type: "string" },
           ],
         },
+        {
+          type: "videoEmbed",
+          title: "Video",
+        },
       ],
     },
     {

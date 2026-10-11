@@ -91,6 +91,18 @@ function readBody(req) {
 }
 
 export default async function handler(req, res) {
+  if (req.method === "GET") {
+    const toEmail = process.env.INTAKE_TO_EMAIL;
+    const fromEmail = process.env.INTAKE_FROM_EMAIL;
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!toEmail || !fromEmail || !apiKey) {
+      return send(res, 503, { configured: false, error: "Intake is not configured" });
+    }
+    // Return 405 Method Not Allowed as expected by probeIntake in script.js
+    res.setHeader("Allow", "POST");
+    return send(res, 405, { configured: true, message: "POST required for submissions" });
+  }
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return send(res, 405, { error: "Method not allowed" });

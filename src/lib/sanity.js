@@ -2,8 +2,10 @@ import { createClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 
 // The project id and dataset are not secrets and are safe to expose.
-export const projectId = import.meta.env.PUBLIC_SANITY_PROJECT_ID;
-export const dataset = import.meta.env.PUBLIC_SANITY_DATASET || "production";
+export const projectId =
+  import.meta.env.PUBLIC_SANITY_PROJECT_ID || "cgcw2i33";
+export const dataset =
+  import.meta.env.PUBLIC_SANITY_DATASET || "production";
 export const apiVersion = "2024-10-01";
 
 // SANITY_API_READ_TOKEN is a server-only variable (no PUBLIC_ prefix), so Astro
@@ -50,4 +52,15 @@ const builder = sanityConfigured
 export function urlFor(source) {
   if (!builder || !source) return "";
   return builder.image(source).auto("format").fit("max").url();
+}
+
+export function fileUrlFor(source) {
+  if (!projectId || !dataset || !source?.asset) return "";
+  const ref = typeof source.asset === "string" ? source.asset : source.asset._ref;
+  if (!ref) return "";
+  // Sanity file asset _ref format: file-<hash>-<extension>
+  const match = ref.match(/^file-([a-f0-9]+)-([a-z0-9]+)$/);
+  if (!match) return "";
+  const [, id, ext] = match;
+  return `https://cdn.sanity.io/files/${projectId}/${dataset}/${id}.${ext}`;
 }

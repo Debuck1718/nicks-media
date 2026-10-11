@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import StoryCard from "@/components/StoryCard.astro";
 import { sanityConfigured, client } from "@/lib/sanity";
 import { latestStoriesQuery } from "@/lib/queries";
 
@@ -130,46 +131,50 @@ if (sanityConfigured) {
 
       <section class="stories section-pad" id="stories">
         <div class="section-heading stories-heading">
-          <div><div class="section-label"><span>05</span> Watch, listen, read</div><h2>Formats with<br /><em>room to move.</em></h2></div>
+          <div><div class="section-label"><span>05</span> {stories && stories.length > 0 ? "Latest stories" : "Watch, listen, read"}</div><h2>{stories && stories.length > 0 ? "From the newsroom." : "Formats with room to move."}</h2></div>
           <a class="underlined-link" href="#contribute">Pitch a collaboration <span aria-hidden="true">↗</span></a>
         </div>
         <div class="story-grid">
-          <article class="story-card story-feature">
-            <div class="story-visual visual-red">
-              <span class="visual-tag">FORMAT CONCEPT / EXPLAINER</span
-              ><span class="visual-big-type"
-                >A<br />FRESH<br />TAKE<span>.</span></span
-              ><span class="visual-stamp">N° 01<br />NM</span>
-            </div>
-            <div class="story-meta">
-              <span>Explainers</span><span>Editorial format</span>
-            </div>
-            <h3>The question behind the headline.</h3>
-            <a
-              href="#contact"
-              class="story-arrow"
-              aria-label="Talk to us about your next story"
-              >↗</a
-            >
-          </article>
-          <article class="story-card">
-            <div class="story-visual visual-blue">
-              <span class="visual-tag">FORMAT CONCEPT / FIELD NOTES</span
-              ><span class="visual-big-type visual-serif"
-                >THE<br />HUMAN<br /><i>story.</i></span
-              ><span class="visual-circle"></span>
-            </div>
-            <div class="story-meta">
-              <span>Field notes</span><span>Video format</span>
-            </div>
-            <h3>People, place, and the stories connecting them.</h3>
-            <a
-              href="#contact"
-              class="story-arrow"
-              aria-label="Talk to us about our approach"
-              >↗</a
-            >
-          </article>
+          {stories && stories.length > 0 ? (
+            stories.map((s) => <StoryCard story={s} />)
+          ) : (
+            <>
+              <article class="story-card story-feature">
+                <div class="story-visual visual-red">
+                  <span class="visual-tag">FORMAT CONCEPT / EXPLAINER</span>
+                  <span class="visual-big-type">A<br />FRESH<br />TAKE<span>.</span></span>
+                  <span class="visual-stamp">N° 01<br />NM</span>
+                </div>
+                <div class="story-meta">
+                  <span>Explainers</span><span>Editorial format</span>
+                </div>
+                <h3>The question behind the headline.</h3>
+                <a
+                  href="#contact"
+                  class="story-arrow"
+                  aria-label="Talk to us about your next story"
+                  >↗</a
+                >
+              </article>
+              <article class="story-card">
+                <div class="story-visual visual-blue">
+                  <span class="visual-tag">FORMAT CONCEPT / FIELD NOTES</span>
+                  <span class="visual-big-type visual-serif">THE<br />HUMAN<br /><i>story.</i></span>
+                  <span class="visual-circle"></span>
+                </div>
+                <div class="story-meta">
+                  <span>Field notes</span><span>Video format</span>
+                </div>
+                <h3>People, place, and the stories connecting them.</h3>
+                <a
+                  href="#contact"
+                  class="story-arrow"
+                  aria-label="Talk to us about our approach"
+                  >↗</a
+                >
+              </article>
+            </>
+          )}
         </div>
       </section>
 
