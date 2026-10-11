@@ -1,18 +1,21 @@
-# Secrets — never commit. server.py reads these from .env at runtime.
+# Secrets — never commit. Astro reads these at build time; the API routes read
+# them at runtime. See .env.example for the full list of names (names only, no
+# values — .env.example is committed, so it must never contain a real secret).
 .env
 .env.*
 !.env.example
 
-# Submission store — contains submitter personal data.
-data/
-*.sqlite3
-*.sqlite3-wal
-*.sqlite3-shm
+# Never commit a Studio's local env either.
+studio/.env
+studio/.env.*
 
-# Python
-__pycache__/
-*.py[cod]
-
-# Node / Vercel
+# Node / Astro / Vercel
 node_modules/
+dist/
+.astro/
 .vercel
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

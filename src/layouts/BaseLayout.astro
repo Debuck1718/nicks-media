@@ -1,0 +1,87 @@
+---
+// Shared shell: head, header, footer. Every page renders through this so the
+// fonts, styles, nav and footer stay identical across the site.
+export interface Props {
+  title: string;
+  description: string;
+  noindex?: boolean;
+  /** Set by the preview endpoint so editors see they are viewing a draft. */
+  isPreview?: boolean;
+}
+
+const { title, description, noindex = false, isPreview = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b2346" />
+    {/* Public same-origin paths only. Never put secrets in page metadata. */}
+    <meta name="report-intake-endpoint" content="/api/reports" />
+    <meta name="submission-privacy-url" content="/privacy" />
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <title>{title}</title>
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/script.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    {isPreview && (
+      <div class="preview-banner" role="status">
+        Draft preview — this story is not published. Only you can see it.
+      </div>
+    )}
+    <header class="site-header" id="top">
+      <a class="brand" href="/" aria-label="Nick’s Media home">
+        <img src="/icon.png" alt="Nick’s Media — Inform. Inspire. Impact." width="66" height="82" />
+      </a>
+      <button
+        class="menu-toggle"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+        aria-label="Open navigation"
+      >
+        <span></span><span></span>
+      </button>
+      <nav class="nav" id="primary-nav" aria-label="Main navigation">
+        <a href="/#latest">Latest</a>
+        <a href="/#live">Live desk</a>
+        <a href="/#shows">Shows &amp; stories</a>
+        <a href="/#about">About</a>
+        <a class="nav-cta" href="/#contribute">Pitch a story <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <footer class="footer">
+      <a class="brand footer-brand" href="/" aria-label="Nick’s Media home"
+        ><img src="/icon.png" alt="Nick’s Media — Inform. Inspire. Impact." width="58" height="72"
+      /></a>
+      <span class="footer-motto">Independent journalism. Inform. Inspire. Impact.</span>
+      <div class="footer-links">
+        <a href="/#latest">Newsroom</a><a href="/#live">Live desk</a
+        ><a href="/#shows">Shows</a><a href="/#about">About</a><a href="/privacy">Privacy</a
+        ><a href="https://www.evantradebuckman.com/" target="_blank" rel="noopener noreferrer"
+          >Evantra ↗</a
+        ><a href="mailto:hello@nicksmedia.com">Contact</a>
+      </div>
+      <span class="copyright"
+        >© <span id="year">2026</span> Nick’s Media. All rights reserved.
+        <span>Editorial submissions require newsroom verification before publication.</span></span
+      >
+    </footer>
+  </body>
+</html>

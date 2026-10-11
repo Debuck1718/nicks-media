@@ -1,0 +1,29 @@
+{
+  "name": "nicks-media",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "18.x"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "sanity:dev": "sanity dev --config studio/sanity.config.js",
+    "sanity:build": "sanity build --config studio/sanity.config.js",
+    "sanity:deploy": "sanity deploy --config studio/sanity.config.js"
+  },
+  "dependencies": {
+    "@astrojs/vercel": "^7.8.2",
+    "@sanity/client": "^6.22.5",
+    "@sanity/image-url": "^1.0.2",
+    "astro": "^4.16.18",
+    "groq": "^3.66.0"
+  },
+  "devDependencies": {
+    "@sanity/vision": "^3.66.0",
+    "sanity": "^3.66.0"
+  }
+}

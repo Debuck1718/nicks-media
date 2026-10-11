@@ -1,0 +1,109 @@
+---
+import { timingSafeEqual } from "node:crypto";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { sanityConfigured, urlFor } from "@/lib/sanity";
+
+// Render on demand (Vercel Function) rather than pre-rendering.
+//
+// Why: draft preview needs to read content that did not exist at build time —
+// including stories that are unpublished or brand new. A pre-rendered page
+// cannot do that, so this route stays dynamic. Published stories are still fast:
+// the CDN caches them normally; only ?preview= requests bypass the cache.
+export const prerender = false;
+
+const { slug } = Astro.params;
+
+// Preview mode: /story/<slug>?preview=<PREVIEW_SECRET> reads the DRAFT instead
+// of the published version. The secret is compared in constant time so a wrong
+// guess cannot be distinguished from a missing one.
+const previewToken = Astro.url.searchParams.get("preview") || "";
+const previewSecret = import.meta.env.PREVIEW_SECRET || "";
+
+function secretMatches(a, b) {
+  if (!a || !b) return false;
+  const ab = Buffer.from(a);
+  const bb = Buffer.from(b);
+  return ab.length === bb.length && timingSafeEqual(ab, bb);
+}
+
+const isPreview = secretMatches(previewToken, previewSecret);
+
+let story = null;
+if (sanityConfigured) {
+  try {
+    const { previewClient, client: c } = await import("@/lib/sanity");
+    // In preview we read drafts; otherwise only published stories.
+    const usedClient = isPreview ? previewClient(previewSecret) || c : c;
+    story = await usedClient.fetch(
+      /* groq */ `*[_type == "story" && slug.current == $slug][0]{
+        title, "slug": slug.current, standfirst, category, publishedAt, featured,
+        coverImage { asset, alt, credit },
+        "author": author->{ name, role, photo { asset, alt } },
+        body, seo
+      }`,
+      { slug },
+    );
+  } catch (error) {
+    console.warn("Could not load story:", error.message);
+  }
+}
+
+if (!story) {
+  return Astro.redirect("/404");
+}
+
+const image = story.coverImage?.asset ? urlFor(story.coverImage) : null;
+const title = story.seo?.metaTitle || `${story.title} — Nick’s Media`;
+const description = story.seo?.metaDescription || story.standfirst;
+const date = story.publishedAt
+  ? new Date(story.publishedAt).toLocaleDateString("en-GB", {
+      day: "numeric", month: "long", year: "numeric",
+    })
+  : "";
+
+// Render Sanity portable-text blocks into plain paragraphs, headings and images.
+function renderBlock(block) {
+  if (block._type !== "block") return "";
+  const text = (block.children || []).map((c) => c.text).join("");
+  switch (block.style) {
+    case "h2": return `<h2>${text}</h2>`;
+    case "h3": return `<h3>${text}</h3>`;
+    case "blockquote": return `<blockquote>${text}</blockquote>`;
+    default: return `<p>${text}</p>`;
+  }
+}
+const bodyHtml = (story.body || [])
+  .map((b) =>
+    b._type === "image" && b.asset
+      ? `<figure><img src="${urlFor(b)}" alt="${b.alt || ""}" loading="lazy" />${
+          b.credit ? `<figcaption>${b.credit}</figcaption>` : ""
+        }</figure>`
+      : renderBlock(b),
+  )
+  .join("");
+---
+
+<BaseLayout {title} {description} noindex={isPreview} {isPreview}>
+  <article class="story-page section-pad">
+    <div class="section-label">
+      <span>{story.category}</span>
+      {story.author?.name && <span>By {story.author.name}</span>}
+    </div>
+    <h1>{story.title}</h1>
+    {story.standfirst && <p class="story-standfirst story-standfirst-large">{story.standfirst}</p>}
+    {date && <p class="story-date"><time datetime={story.publishedAt}>{date}</time></p>}
+
+    {image && (
+      <figure class="story-lead-image">
+        <img src={image} alt={story.coverImage.alt || ""} />
+        {story.coverImage.credit && <figcaption>{story.coverImage.credit}</figcaption>}
+      </figure>
+    )}
+
+    <div class="story-body" set:html={bodyHtml} />
+
+    <p class="story-back">
+      <a class="underlined-link" href="/">← Back to the newsroom</a>
+    </p>
+  </article>
+</BaseLayout>

@@ -1,0 +1,40 @@
+---
+import { urlFor } from "@/lib/sanity";
+
+export interface Props {
+  story: {
+    title: string;
+    slug: string;
+    standfirst: string;
+    category: string;
+    publishedAt?: string;
+    coverImage?: { asset?: unknown; alt?: string; credit?: string } | null;
+    author?: { name?: string } | null;
+  };
+}
+
+const { story } = Astro.props;
+const image = story.coverImage?.asset ? urlFor(story.coverImage) : null;
+const date = story.publishedAt
+  ? new Date(story.publishedAt).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    })
+  : "";
+---
+
+<article class="story-card">
+  <a class="story-link" href={`/story/${story.slug}`} aria-label={story.title}>
+    <div class="story-visual" style={image ? `background-image:url('${image}')` : undefined}>
+      <span class="visual-tag">{story.category}</span>
+      {!image && <span class="visual-big-type visual-serif">{story.title}<span>.</span></span>}
+    </div>
+    <div class="story-meta">
+      <span>{story.author?.name ?? "Nick’s Media"}</span>
+      <time datetime={story.publishedAt}>{date}</time>
+    </div>
+    <h3>{story.title}</h3>
+    <p class="story-standfirst">{story.standfirst}</p>
+  </a>
+</article>

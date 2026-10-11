@@ -14,7 +14,7 @@
 // Without these the endpoint reports itself as unconfigured rather than
 // silently discarding a contributor's submission.
 
-const crypto = require("crypto");
+import crypto from "node:crypto";
 
 const CATEGORIES = new Set([
   "Breaking",
@@ -90,7 +90,7 @@ function readBody(req) {
   });
 }
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return send(res, 405, { error: "Method not allowed" });
@@ -208,4 +208,4 @@ module.exports = async (req, res) => {
   }
 
   return send(res, 201, { accepted: true, reference });
-};
+}

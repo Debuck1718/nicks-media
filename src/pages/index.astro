@@ -1,52 +1,25 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0b2346" />
-    <!-- Public same-origin paths only. Never put secrets in page metadata. -->
-    <meta name="report-intake-endpoint" content="/api/reports" />
-    <meta name="submission-privacy-url" content="/privacy" />
-    <meta
-      name="description"
-      content="Nick’s Media is an independent newsroom and production house for trusted reporting, live updates, film and broadcast."
-    />
-    <title>Nick’s Media — News. Stories. Signal.</title>
-    <link rel="icon" type="image/png" href="icon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
-    <script src="script.js" defer></script>
-  </head>
-  <body>
-    <a class="skip-link" href="#main-content">Skip to content</a>
-    <header class="site-header" id="top">
-      <a class="brand" href="#top" aria-label="Nick’s Media home">
-        <img src="icon.png" alt="Nick’s Media — Inform. Inspire. Impact." width="66" height="82" />
-      </a>
-      <button
-        class="menu-toggle"
-        aria-expanded="false"
-        aria-controls="primary-nav"
-        aria-label="Open navigation"
-      >
-        <span></span><span></span>
-      </button>
-      <nav class="nav" id="primary-nav" aria-label="Main navigation">
-        <a href="#latest">Latest</a>
-        <a href="#live">Live desk</a>
-        <a href="#shows">Shows &amp; stories</a>
-        <a href="#about">About</a>
-        <a class="nav-cta" href="#contribute">Pitch a story <span aria-hidden="true">↗</span></a>
-      </nav>
-    </header>
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { sanityConfigured, client } from "@/lib/sanity";
+import { latestStoriesQuery } from "@/lib/queries";
 
-    <main id="main-content">
-      <section class="hero newsroom-hero" aria-labelledby="hero-title">
+// Fetched at build time. If Sanity is not configured yet the site still builds
+// and renders exactly as before, so this migration cannot break the homepage.
+let stories = [];
+if (sanityConfigured) {
+  try {
+    stories = await client.fetch(latestStoriesQuery);
+  } catch (error) {
+    console.warn("Sanity fetch failed; rendering homepage without stories:", error.message);
+  }
+}
+---
+
+<BaseLayout
+  title="Nick’s Media — News. Stories. Signal."
+  description="Nick’s Media is an independent newsroom and production house for trusted reporting, live updates, film and broadcast."
+>
+<section class="hero newsroom-hero" aria-labelledby="hero-title">
         <div class="hero-copy">
           <p class="eyebrow"><span></span> Independent journalism. Made to move.</p>
           <h1 id="hero-title">The world is moving. <em>We’re on it.</em></h1>
@@ -203,13 +176,4 @@
       <section class="contributor-cta section-pad" id="contribute"><div><div class="section-label"><span>06</span> Make the news with us</div><h2>On the ground?<br /><em>In the know?</em></h2></div><div class="contributor-copy"><p>We’re building a network of journalists, camera operators, producers, and curious minds. Bring us the story only you can tell.</p><a href="#live" class="button button-light">Send a report to the desk <span aria-hidden="true">↗</span></a><a class="partner-link" href="https://www.evantradebuckman.com/" target="_blank" rel="noopener noreferrer">Technology &amp; venture partner: Evantra De-Buckman Ventures ↗</a></div></section>
 
       <section class="contact section-pad" id="contact"><div class="contact-top"><div class="section-label"><span>07</span> Partnerships &amp; press</div><span class="contact-spark" aria-hidden="true">✳</span></div><h2>Let’s make<br /><em>it matter.</em></h2><div class="contact-bottom"><p>For partnership enquiries, interviews, production, or press requests, start a conversation with the Nick’s Media team.</p><a href="mailto:hello@nicksmedia.com?subject=Nick%27s%20Media%20enquiry" class="button button-light">Contact the team <span aria-hidden="true">↗</span></a></div></section>
-    </main>
-
-    <footer class="footer">
-      <a class="brand footer-brand" href="#top" aria-label="Nick’s Media home"><img src="icon.png" alt="Nick’s Media — Inform. Inspire. Impact." width="58" height="72" /></a>
-      <span class="footer-motto">Independent journalism. Inform. Inspire. Impact.</span>
-      <div class="footer-links"><a href="#latest">Newsroom</a><a href="#live">Live desk</a><a href="#shows">Shows</a><a href="#about">About</a><a href="/privacy">Privacy</a><a href="https://www.evantradebuckman.com/" target="_blank" rel="noopener noreferrer">Evantra ↗</a><a href="mailto:hello@nicksmedia.com">Contact</a></div>
-      <span class="copyright">© <span id="year">2026</span> Nick’s Media. All rights reserved. <span>Editorial submissions require newsroom verification before publication.</span></span>
-    </footer>
-  </body>
-</html>
+</BaseLayout>

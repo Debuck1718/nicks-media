@@ -1,0 +1,28 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Page not found — Nick’s Media"
+  description="That page isn’t on the Nick’s Media desk. Head back to the newsroom."
+  noindex
+>
+<article class="legal section-pad">
+        <div class="section-label"><span>404</span> Off the desk</div>
+        <h1>This page isn’t <em>on the desk.</em></h1>
+        <p class="legal-intro">
+          The page you asked for doesn’t exist, or it has moved. The newsroom is
+          still here.
+        </p>
+        <p class="legal-actions">
+          <a class="button button-dark" href="/"
+            >Back to the newsroom <span aria-hidden="true">↗</span></a
+          >
+        </p>
+        <p class="legal-actions">
+          <a class="underlined-link" href="/#live"
+            >Go to the live desk <span aria-hidden="true">↗</span></a
+          >
+        </p>
+      </article>
+</BaseLayout>
