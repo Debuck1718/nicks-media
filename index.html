@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b2346" />
+    <!-- Public same-origin paths only. Never put secrets in page metadata. -->
+    <meta name="report-intake-endpoint" content="/api/reports" />
+    <meta name="submission-privacy-url" content="/privacy" />
+    <meta
+      name="description"
+      content="Nick’s Media is an independent newsroom and production house for trusted reporting, live updates, film and broadcast."
+    />
+    <title>Nick’s Media — News. Stories. Signal.</title>
+    <link rel="icon" type="image/png" href="icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header" id="top">
+      <a class="brand" href="#top" aria-label="Nick’s Media home">
+        <img src="icon.png" alt="Nick’s Media — Inform. Inspire. Impact." width="66" height="82" />
+      </a>
+      <button
+        class="menu-toggle"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+        aria-label="Open navigation"
+      >
+        <span></span><span></span>
+      </button>
+      <nav class="nav" id="primary-nav" aria-label="Main navigation">
+        <a href="#latest">Latest</a>
+        <a href="#live">Live desk</a>
+        <a href="#shows">Shows &amp; stories</a>
+        <a href="#about">About</a>
+        <a class="nav-cta" href="#contribute">Pitch a story <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <section class="hero newsroom-hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span> Independent journalism. Made to move.</p>
+          <h1 id="hero-title">The world is moving. <em>We’re on it.</em></h1>
+          <p class="hero-intro">A modern media house for the stories shaping our lives — reported with care, produced with imagination, and ready for every screen.</p>
+          <div class="hero-actions">
+            <a class="button button-dark" href="#latest">Explore the newsroom <span aria-hidden="true">↗</span></a>
+            <a class="text-link" href="#live">Go to live desk <span aria-hidden="true">↓</span></a>
+          </div>
+          <div class="hero-note"><span class="note-line"></span><span>Inform <i>•</i> Inspire <i>•</i> Impact</span></div>
+        </div>
+        <a class="hero-art lead-art" href="#latest" aria-label="Explore the Nick’s Media newsroom">
+          <div class="art-grid"></div><span class="art-index">NICK’S MEDIA / NEWSROOM</span>
+          <span class="lead-kicker"><i></i> A NEW SIGNAL IS HERE</span>
+          <span class="lead-letter">N<span>M</span></span>
+          <span class="lead-title">News moves<br />everything.</span>
+          <span class="lead-caption">REPORTING · CULTURE · IDEAS <b>↗</b></span>
+          <span class="lead-orbit" aria-hidden="true"></span>
+        </a>
+        <a class="scroll-cue" href="#latest"><span>Inside the newsroom</span><i aria-hidden="true"></i></a>
+      </section>
+
+      <section class="news-ribbon" aria-label="Newsroom focus"><span class="ribbon-live"><i></i> THE NEWSROOM</span><span>REPORTING</span><b>✳</b><span>LIVE UPDATES</span><b>✳</b><span>FILM &amp; BROADCAST</span><b>✳</b><span>PEOPLE &amp; CULTURE</span><b>✳</b><span>GLOBAL PERSPECTIVES</span></section>
+
+      <section class="latest section-pad" id="latest">
+        <div class="section-heading"><div><div class="section-label"><span>01</span> The newsroom</div><h2>Journalism for a <em>connected world.</em></h2></div><p>Grounded reporting. Distinctive voices. Stories that help you understand what’s happening — and why it matters.</p></div>
+        <div class="news-grid">
+          <article class="news-feature"><div class="news-cover cover-main"><span class="cover-top">NICK’S MEDIA <span>FIELD NOTES / 001</span></span><span class="cover-symbol">NM<span>↗</span></span><span class="cover-bottom">A clearer view<br />starts here.</span><span class="cover-index">01 — 04</span></div><div class="news-meta"><span class="news-category">OUR EDITORIAL PROMISE</span><span>THE NEWSROOM</span></div><h3>Context before clicks. People before headlines.</h3><p>We’re building a newsroom that puts accuracy, context, and the communities in every story first.</p><a class="underlined-link" href="#about">How we work <span aria-hidden="true">↗</span></a></article>
+          <div class="news-briefs"><article class="brief-card"><span class="brief-number">01</span><div><span class="news-category">REPORTING</span><h3>Go beyond the headline.</h3><p>Original journalism, explainers, and field reporting with the detail a fast-moving world deserves.</p><a href="#contribute">Meet the newsroom ↗</a></div></article><article class="brief-card"><span class="brief-number">02</span><div><span class="news-category">CULTURE &amp; COMMUNITY</span><h3>Make room for more voices.</h3><p>Stories shaped by the people living them — told with curiosity, care, and perspective.</p><a href="#shows">Explore our formats ↗</a></div></article><article class="brief-card"><span class="brief-number">03</span><div><span class="news-category">VIDEO &amp; BROADCAST</span><h3>Made for the moment.</h3><p>From short-form video to live conversations, journalism built for the way people watch and listen.</p><a href="#shows">See what we’re making ↗</a></div></article></div>
+        </div>
+      </section>
+
+      <section class="standards section-pad" aria-labelledby="standards-title">
+        <div class="standards-heading">
+          <div class="section-label">Our editorial standard</div>
+          <h2 id="standards-title">Trust isn’t a tagline.<br /><em>It’s the work.</em></h2>
+        </div>
+        <div class="standards-grid">
+          <article><span>01</span><h3>Verify before we publish.</h3><p>We seek reliable evidence and check key claims before presenting them as fact.</p></article>
+          <article><span>02</span><h3>Show what we know.</h3><p>We add context, distinguish fact from analysis, and say when a story is still developing.</p></article>
+          <article><span>03</span><h3>Correct the record.</h3><p>When we get something wrong, we aim to make the correction clear and visible.</p></article>
+        </div>
+      </section>
+
+      <section class="live-desk" id="live">
+        <div class="live-inner"><div class="live-heading"><div><div class="section-label"><span>02</span> The live desk</div><h2>As it <em>unfolds.</em></h2><p>A home for timely, verified updates from our reporters and contributors.</p></div><span class="live-status"><i></i> REPORT INTAKE / OPEN</span></div>
+          <div class="wire-layout"><div class="wire-feed"><div class="wire-toolbar"><span>NEWSROOM WIRE</span><span>UPDATES FROM OUR DESK</span></div><div id="wire-list" class="wire-list" aria-live="polite"><div class="wire-empty"><span class="empty-mark">✳</span><div><strong>The desk is ready.</strong><p>There are no live updates right now. Verified reports will appear here when our newsroom publishes them.</p></div></div></div><p class="wire-note">This feed is not connected to a publishing system. Submissions are routed only when secure intake is configured; do not send confidential or urgent tips through this page.</p></div>
+            <form class="report-form" id="report-form"><div class="form-heading"><span class="form-kicker">FOR JOURNALISTS &amp; CONTRIBUTORS</span><h3>Send a report<br /><em>to the desk.</em></h3><p>Share a developing story with our editors. Add only information you’re able to verify.</p></div><label for="reporter-name">Your name</label><input id="reporter-name" name="reporter" autocomplete="name" required maxlength="70" placeholder="Reporter or contributor name" /><label for="reporter-email">Email for follow-up</label><input id="reporter-email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" /><label for="report-category">Desk</label><select id="report-category" name="category"><option>Breaking</option><option>Reporting</option><option>Culture</option><option>Business</option><option>World</option><option>Video &amp; broadcast</option></select><label for="report-headline">Update headline</label><input id="report-headline" name="headline" required maxlength="120" placeholder="What’s happening?" /><label for="report-details">What do we know?</label><textarea id="report-details" name="details" required minlength="20" maxlength="1200" rows="4" placeholder="Share the key facts, where they’re confirmed, and what is still developing."></textarea><div class="form-trap" aria-hidden="true"><label for="report-website">Leave this field blank</label><input id="report-website" name="website" type="text" tabindex="-1" autocomplete="off" /></div><label class="submission-consent"><input id="submission-consent" name="consent" type="checkbox" required disabled /><span>I have read the <a id="submission-privacy-link" target="_blank" rel="noopener noreferrer">submission privacy notice</a> and agree to the stated handling of my submission.</span></label><button class="button button-light report-submit" id="report-submit" type="submit" disabled>Secure intake unavailable</button><p class="form-disclaimer" id="form-status" role="status" aria-live="polite">Secure intake is not configured. Reports are not sent or saved here. Do not submit confidential or urgent tips through this page.</p></form>
+          </div>
+        </div>
+      </section>
+
+      <section class="intro section-pad about-section" id="about">
+        <div class="section-label"><span>03</span> Who we are</div>
+        <div class="intro-content"><h2>A media house built to <span>connect the dots.</span></h2><div class="intro-text"><p>Nick’s Media brings journalism, creative production, and broadcast together under one roof — connecting local stories to wider conversations.</p><a class="underlined-link" href="https://www.evantradebuckman.com/" target="_blank" rel="noopener noreferrer">Meet our strategic partner <span aria-hidden="true">↗</span></a></div></div>
+        <div class="values-row"><span>Accurate by design</span><span>Independent in spirit</span><span>Built for every platform</span></div>
+      </section>
+
+      <section class="services section-pad formats-section" id="shows">
+        <div class="section-heading">
+          <div><div class="section-label"><span>04</span> One newsroom. Many ways in.</div><h2>Stories for every <em>screen.</em></h2></div>
+          <p>From the field to your feed, our teams build useful, watchable, shareable journalism for the platforms people use every day.</p>
+        </div>
+        <div class="service-grid">
+          <article class="service-card">
+            <span class="service-no">01 / EDITORIAL</span>
+            <div class="service-icon icon-story" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <h3>News &amp; explainers</h3>
+            <p>Original reporting, sharp explainers, and considered analysis that gives the moment context.</p>
+            <a
+              href="#contact"
+              aria-label="Ask us about content and storytelling"
+              >↗</a
+            >
+          </article>
+          <article class="service-card">
+            <span class="service-no">02 / ON AIR</span>
+            <div class="service-icon icon-visual" aria-hidden="true">
+              <span></span><span></span>
+            </div>
+            <h3>Video &amp; broadcast</h3>
+            <p>Field reports, studio conversations, documentaries, and live coverage made for every screen.</p>
+            <a href="#contact" aria-label="Ask us about film and production"
+              >↗</a
+            >
+          </article>
+          <article class="service-card">
+            <span class="service-no">03 / COMMUNITY</span>
+            <div class="service-icon icon-culture" aria-hidden="true">
+              <span>✳</span>
+            </div>
+            <h3>Culture &amp; voices</h3>
+            <p>People-first stories, new perspectives, and community voices worth bringing into focus.</p>
+            <a href="#contact" aria-label="Ask us about creative campaigns"
+              >↗</a
+            >
+          </article>
+        </div>
+      </section>
+
+      <section class="manifesto partner-band">
+        <div class="manifesto-mark" aria-hidden="true">“</div>
+        <p>Built to tell stories.<br />Connected to <em>build what’s next.</em></p>
+        <span>NICK’S MEDIA × EVANTRA DE-BUCKMAN VENTURES</span>
+        <div class="manifesto-decoration" aria-hidden="true"></div>
+      </section>
+
+      <section class="stories section-pad" id="stories">
+        <div class="section-heading stories-heading">
+          <div><div class="section-label"><span>05</span> Watch, listen, read</div><h2>Formats with<br /><em>room to move.</em></h2></div>
+          <a class="underlined-link" href="#contribute">Pitch a collaboration <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="story-grid">
+          <article class="story-card story-feature">
+            <div class="story-visual visual-red">
+              <span class="visual-tag">FORMAT CONCEPT / EXPLAINER</span
+              ><span class="visual-big-type"
+                >A<br />FRESH<br />TAKE<span>.</span></span
+              ><span class="visual-stamp">N° 01<br />NM</span>
+            </div>
+            <div class="story-meta">
+              <span>Explainers</span><span>Editorial format</span>
+            </div>
+            <h3>The question behind the headline.</h3>
+            <a
+              href="#contact"
+              class="story-arrow"
+              aria-label="Talk to us about your next story"
+              >↗</a
+            >
+          </article>
+          <article class="story-card">
+            <div class="story-visual visual-blue">
+              <span class="visual-tag">FORMAT CONCEPT / FIELD NOTES</span
+              ><span class="visual-big-type visual-serif"
+                >THE<br />HUMAN<br /><i>story.</i></span
+              ><span class="visual-circle"></span>
+            </div>
+            <div class="story-meta">
+              <span>Field notes</span><span>Video format</span>
+            </div>
+            <h3>People, place, and the stories connecting them.</h3>
+            <a
+              href="#contact"
+              class="story-arrow"
+              aria-label="Talk to us about our approach"
+              >↗</a
+            >
+          </article>
+        </div>
+      </section>
+
+      <section class="contributor-cta section-pad" id="contribute"><div><div class="section-label"><span>06</span> Make the news with us</div><h2>On the ground?<br /><em>In the know?</em></h2></div><div class="contributor-copy"><p>We’re building a network of journalists, camera operators, producers, and curious minds. Bring us the story only you can tell.</p><a href="#live" class="button button-light">Send a report to the desk <span aria-hidden="true">↗</span></a><a class="partner-link" href="https://www.evantradebuckman.com/" target="_blank" rel="noopener noreferrer">Technology &amp; venture partner: Evantra De-Buckman Ventures ↗</a></div></section>
+
+      <section class="contact section-pad" id="contact"><div class="contact-top"><div class="section-label"><span>07</span> Partnerships &amp; press</div><span class="contact-spark" aria-hidden="true">✳</span></div><h2>Let’s make<br /><em>it matter.</em></h2><div class="contact-bottom"><p>For partnership enquiries, interviews, production, or press requests, start a conversation with the Nick’s Media team.</p><a href="mailto:hello@nicksmedia.com?subject=Nick%27s%20Media%20enquiry" class="button button-light">Contact the team <span aria-hidden="true">↗</span></a></div></section>
+    </main>
+
+    <footer class="footer">
+      <a class="brand footer-brand" href="#top" aria-label="Nick’s Media home"><img src="icon.png" alt="Nick’s Media — Inform. Inspire. Impact." width="58" height="72" /></a>
+      <span class="footer-motto">Independent journalism. Inform. Inspire. Impact.</span>
+      <div class="footer-links"><a href="#latest">Newsroom</a><a href="#live">Live desk</a><a href="#shows">Shows</a><a href="#about">About</a><a href="/privacy">Privacy</a><a href="https://www.evantradebuckman.com/" target="_blank" rel="noopener noreferrer">Evantra ↗</a><a href="mailto:hello@nicksmedia.com">Contact</a></div>
+      <span class="copyright">© <span id="year">2026</span> Nick’s Media. All rights reserved. <span>Editorial submissions require newsroom verification before publication.</span></span>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Nothing private is served from this origin. The editorial inbox and intake
+# endpoint live elsewhere; /api/reports is POST-only and returns no content.
+Disallow: /api/
+
+Sitemap: https://nicksmedia.com/sitemap.xml

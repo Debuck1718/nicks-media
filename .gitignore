@@ -1,0 +1,18 @@
+# Secrets — never commit. server.py reads these from .env at runtime.
+.env
+.env.*
+!.env.example
+
+# Submission store — contains submitter personal data.
+data/
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Node / Vercel
+node_modules/
+.vercel
