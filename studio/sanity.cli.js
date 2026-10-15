@@ -13,4 +13,7 @@ export default defineCliConfig({
       process.env.PUBLIC_SANITY_DATASET ||
       "production",
   },
+  deployment: {
+    appId: "o4hdifoqlsvtsn82ty1ornca",
+  },
 });
