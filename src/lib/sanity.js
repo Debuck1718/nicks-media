@@ -8,13 +8,12 @@ export const dataset =
   import.meta.env.PUBLIC_SANITY_DATASET || "production";
 export const apiVersion = "2024-10-01";
 
-// SANITY_API_READ_TOKEN is a server-only variable (no PUBLIC_ prefix), so Astro
-// strips it from the client bundle. It is required because the dataset is
-// PRIVATE: even reading published stories needs authentication.
-//
-// This is the ONLY place the token is read, and only for build-time fetches on
-// the server. It is never passed into a rendered page.
-const readToken = import.meta.env.SANITY_API_READ_TOKEN;
+// Server-only: prefer Astro's build-time env value, then fall back to the
+// Vercel function runtime environment for on-demand homepage/story requests.
+// Never use a PUBLIC_ prefix or pass this token to rendered HTML.
+const readToken =
+  import.meta.env.SANITY_API_READ_TOKEN ||
+  (typeof process !== "undefined" ? process.env.SANITY_API_READ_TOKEN : "");
 
 export const sanityConfigured = Boolean(projectId);
 export const sanityHasToken = Boolean(projectId && readToken);

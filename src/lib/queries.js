@@ -8,24 +8,23 @@ const STORY_FIELDS = /* groq */ `
   "slug": slug.current,
   standfirst,
   category,
-  publishedAt,
+  "publishedAt": coalesce(publishedAt, _createdAt),
   featured,
   coverImage { asset, alt, credit },
   "author": author->{ name, role, photo { asset, alt } },
   seo,
 `;
 
-// Only stories that are genuinely publishable: a real published date in the
-// past-or-now, and a slug to link to.
+// Sanity's published perspective already excludes drafts. Allow older published
+// stories without a date, while keeping scheduled stories hidden until their date.
 export const PUBLISHED_FILTER = /* groq */ `
   _type == "story" &&
   defined(slug.current) &&
-  defined(publishedAt) &&
-  publishedAt <= now()
+  (!defined(publishedAt) || publishedAt <= now())
 `;
 
 export const storiesQuery = /* groq */ `
-  *[${PUBLISHED_FILTER}] | order(publishedAt desc) {
+  *[${PUBLISHED_FILTER}] | order(coalesce(publishedAt, _createdAt) desc) {
     ${STORY_FIELDS}
     body,
   }
@@ -36,13 +35,13 @@ export const storySlugsQuery = /* groq */ `
 `;
 
 export const featuredStoriesQuery = /* groq */ `
-  *[${PUBLISHED_FILTER} && featured == true] | order(publishedAt desc)[0...3] {
+  *[${PUBLISHED_FILTER} && featured == true] | order(coalesce(publishedAt, _createdAt) desc)[0...3] {
     ${STORY_FIELDS}
   }
 `;
 
 export const latestStoriesQuery = /* groq */ `
-  *[${PUBLISHED_FILTER}] | order(publishedAt desc)[0...6] {
+  *[${PUBLISHED_FILTER}] | order(coalesce(publishedAt, _createdAt) desc)[0...6] {
     ${STORY_FIELDS}
   }
 `;

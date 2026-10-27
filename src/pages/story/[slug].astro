@@ -17,7 +17,10 @@ const { slug } = Astro.params;
 // of the published version. The secret is compared in constant time so a wrong
 // guess cannot be distinguished from a missing one.
 const previewToken = Astro.url.searchParams.get("preview") || "";
-const previewSecret = import.meta.env.PREVIEW_SECRET || "";
+const previewSecret =
+  import.meta.env.PREVIEW_SECRET ||
+  (typeof process !== "undefined" ? process.env.PREVIEW_SECRET : "") ||
+  "";
 
 function secretMatches(a, b) {
   if (!a || !b) return false;
@@ -33,15 +36,17 @@ if (sanityConfigured) {
   try {
     const { previewClient, client: c } = await import("@/lib/sanity");
     // In preview we read drafts; otherwise only published stories.
-    const usedClient = isPreview ? previewClient(previewSecret) || c : c;
+    const draftClient = isPreview ? previewClient(previewSecret) : null;
+    const usedClient = draftClient || c;
     story = await usedClient.fetch(
-      /* groq */ `*[_type == "story" && slug.current == $slug][0]{
-        title, "slug": slug.current, standfirst, category, publishedAt, featured,
+      /* groq */ `*[_type == "story" && slug.current == $slug && ($canPreview || !defined(publishedAt) || publishedAt <= now())][0]{
+        title, "slug": slug.current, standfirst, category,
+        "publishedAt": coalesce(publishedAt, _createdAt), featured,
         coverImage { asset, alt, credit },
         "author": author->{ name, role, photo { asset, alt } },
         body, seo
       }`,
-      { slug },
+      { slug, canPreview: Boolean(draftClient) },
     );
   } catch (error) {
     console.warn("Could not load story:", error.message);

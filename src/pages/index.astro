@@ -4,14 +4,18 @@ import StoryCard from "@/components/StoryCard.astro";
 import { sanityConfigured, client } from "@/lib/sanity";
 import { latestStoriesQuery } from "@/lib/queries";
 
-// Fetched at build time. If Sanity is not configured yet the site still builds
-// and renders exactly as before, so this migration cannot break the homepage.
+// Render this route on demand so Sanity publications appear without a site rebuild.
+export const prerender = false;
+Astro.response.headers.set("Cache-Control", "no-store");
+
+// Published content is fetched on each request. If Sanity is unavailable, the
+// homepage keeps its existing editorial fallback content.
 let stories = [];
 if (sanityConfigured) {
   try {
     stories = await client.fetch(latestStoriesQuery);
   } catch (error) {
-    console.warn("Sanity fetch failed; rendering homepage without stories:", error.message);
+    console.warn("Sanity fetch failed; rendering homepage with fallback content:", error.message);
   }
 }
 ---
