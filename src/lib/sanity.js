@@ -53,6 +53,13 @@ export function urlFor(source) {
   return builder.image(source).auto("format").fit("max").url();
 }
 
+// Fixed-size crops for social cards and feeds (Open Graph needs a stable
+// 1200x630 image, not an arbitrary original).
+export function socialImageFor(source, { width = 1200, height = 630 } = {}) {
+  if (!builder || !source) return "";
+  return builder.image(source).width(width).height(height).fit("crop").auto("format").url();
+}
+
 export function fileUrlFor(source) {
   if (!projectId || !dataset || !source?.asset) return "";
   const ref = typeof source.asset === "string" ? source.asset : source.asset._ref;

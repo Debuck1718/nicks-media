@@ -1,7 +1,9 @@
 ---
 import { timingSafeEqual } from "node:crypto";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { sanityConfigured, urlFor, fileUrlFor } from "@/lib/sanity";
+import StoryCard from "@/components/StoryCard.astro";
+import { sanityConfigured, urlFor, fileUrlFor, socialImageFor } from "@/lib/sanity";
+import { relatedStoriesQuery } from "@/lib/queries";
 
 // Render on demand (Vercel Function) rather than pre-rendering.
 //
@@ -41,7 +43,8 @@ if (sanityConfigured) {
     story = await usedClient.fetch(
       /* groq */ `*[_type == "story" && slug.current == $slug && ($canPreview || !defined(publishedAt) || publishedAt <= now())][0]{
         title, "slug": slug.current, standfirst, category,
-        "publishedAt": coalesce(publishedAt, _createdAt), featured,
+        "publishedAt": coalesce(publishedAt, _createdAt),
+        "updatedAt": coalesce(_updatedAt, publishedAt, _createdAt), featured,
         coverImage { asset, alt, credit },
         "author": author->{ name, role, photo { asset, alt } },
         body, seo
@@ -53,11 +56,32 @@ if (sanityConfigured) {
   }
 }
 
+// Return the 404 status with the branded page. A real 404 (rather than a
+// redirect to /404) is what tells Google a dead link is gone instead of
+// indexing a soft 404, which harms the whole domain.
 if (!story) {
-  return Astro.redirect("/404");
+  return new Response(null, { status: 404 });
+}
+
+// Keep the reader in the newsroom: same-desk stories first, then the newest.
+let relatedStories = [];
+if (sanityConfigured && !isPreview) {
+  try {
+    relatedStories = await client.fetch(relatedStoriesQuery, {
+      slug,
+      category: story.category || "",
+    });
+  } catch (error) {
+    console.warn("Could not load related stories:", error.message);
+  }
 }
 
 const image = story.coverImage?.asset ? urlFor(story.coverImage) : null;
+const shareImage = story.seo?.shareImage?.asset
+  ? socialImageFor(story.seo.shareImage)
+  : story.coverImage?.asset
+    ? socialImageFor(story.coverImage)
+    : undefined;
 const title = story.seo?.metaTitle || `${story.title} — Nick’s Media`;
 const description = story.seo?.metaDescription || story.standfirst;
 const date = story.publishedAt
@@ -65,6 +89,53 @@ const date = story.publishedAt
       day: "numeric", month: "long", year: "numeric",
     })
   : "";
+
+// Structured data. NewsArticle is what search engines and Google News read to
+// understand who published a story, when, and who to credit; the WebSite entry
+// lets Google show a search box for the newsroom.
+const site = Astro.site ?? new URL(Astro.url.origin);
+const storyUrl = new URL(`/story/${story.slug}`, site).href;
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: story.title,
+    description,
+    url: storyUrl,
+    mainEntityOfPage: { "@type": "WebPage", "@id": storyUrl },
+    datePublished: story.publishedAt ? new Date(story.publishedAt).toISOString() : undefined,
+    dateModified: story.updatedAt ? new Date(story.updatedAt).toISOString() : undefined,
+    articleSection: story.category,
+    inLanguage: "en-GB",
+    isAccessibleForFree: true,
+    ...(shareImage ? { image: [shareImage] } : {}),
+    author: story.author?.name
+      ? { "@type": "Person", name: story.author.name }
+      : { "@type": "Organization", name: "Nick’s Media" },
+    publisher: {
+      "@type": "NewsMediaOrganization",
+      name: "Nick’s Media",
+      url: new URL("/", site).href,
+      logo: {
+        "@type": "ImageObject",
+        url: new URL("/icon.png", site).href,
+        width: 512,
+        height: 512,
+      },
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Nick’s Media",
+    url: new URL("/", site).href,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${new URL("/", site).href}?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  },
+];
 
 // Render Sanity portable-text blocks into plain paragraphs, headings, images, and videos.
 function renderBlock(block) {
@@ -131,7 +202,16 @@ const bodyHtml = (story.body || [])
   .join("");
 ---
 
-<BaseLayout {title} {description} noindex={isPreview} {isPreview}>
+<BaseLayout
+  {title}
+  {description}
+  noindex={isPreview}
+  {isPreview}
+  image={shareImage}
+  canonical={storyUrl}
+  ogType="article"
+  {jsonLd}
+>
   <article class="story-page section-pad">
     <div class="section-label">
       <span>{story.category}</span>
@@ -151,7 +231,22 @@ const bodyHtml = (story.body || [])
     <div class="story-body" set:html={bodyHtml} />
 
     <p class="story-back">
-      <a class="underlined-link" href="/">← Back to the newsroom</a>
+      <a class="underlined-link" href="/">← Back to the front page</a>
     </p>
   </article>
+
+  {relatedStories.length > 0 && (
+    <section class="read-next section-pad" aria-labelledby="read-next-title">
+      <div class="section-heading">
+        <div>
+          <div class="section-label"><span>Next</span> Read next</div>
+          <h2 id="read-next-title">More from <em>the newsroom.</em></h2>
+        </div>
+        <a class="underlined-link" href="/#latest">Front page <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="story-grid">
+        {relatedStories.map((s) => <StoryCard story={s} />)}
+      </div>
+    </section>
+  )}
 </BaseLayout>

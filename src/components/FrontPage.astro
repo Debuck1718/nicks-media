@@ -1,0 +1,144 @@
+---
+// The front page: the first thing a visitor sees. A real story leads — the
+// featured-desk pick first, then the newest publication — with the next stories
+// in a rail beside it and a short table of everything else. No scrolling needed
+// to reach the news.
+//
+// Everything is computed in the frontmatter (rather than inside JSX
+// expressions) so the template stays plain markup, which Astro's compiler and
+// parser read most reliably.
+import { urlFor } from "@/lib/sanity";
+
+export interface Props {
+  lead?: any[];
+  latest?: any[];
+  desks?: string[];
+  total?: number;
+}
+
+const { lead = [], latest = [], desks = [], total = 0 } = Astro.props;
+
+const dateLabel = (value: any) =>
+  value
+    ? new Date(value).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+    : "";
+const timeLabel = (value: any) =>
+  value ? new Date(value).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : "";
+const iso = (value: any) => (value ? new Date(value).toISOString() : "");
+
+const topStory = lead[0] || null;
+const railStories = completed(lead.slice(1, 4));
+const tableStories = completed([...lead.slice(4), ...latest].slice(0, 4));
+
+// Drops any half-filled placeholder so the template never renders an empty link.
+function completed(items: any[]) {
+  return items.filter((s) => s && s.slug && s.title);
+}
+
+const isLive = Boolean(topStory?.isLive);
+const cover = topStory?.coverImage?.asset ? urlFor(topStory.coverImage) : null;
+const railDesks = desks.length ? desks.slice(0, 4) : ["Breaking", "Reporting", "World", "Culture"];
+const editionDate = topStory ? dateLabel(topStory.publishedAt) || "Today" : "Today";
+const topKicker = isLive ? "Live" : topStory?.category || "";
+const summary = topStory?.standfirst ? String(topStory.standfirst) : "";
+const countLabel = total === 1 ? "story" : "stories";
+---
+
+{topStory && (
+  <section class="front-page" id="latest" aria-labelledby="front-title">
+    <div class="front-head">
+      <span class="front-edition">{`Edition · ${editionDate}`}</span>
+      <span class="front-standfirst">Inform. Inspire. Impact. Every story verified by the desk before it runs.</span>
+      <span class="front-count">{`${total} ${countLabel} published`}</span>
+    </div>
+
+    <h1 class="sr-only" id="front-title">The latest from Nick’s Media</h1>
+
+    <div class="front-grid">
+      <article class="lead-story">
+        <a class="lead-story-link" href={`/story/${topStory.slug}`}>
+          <div class={`lead-story-visual${cover ? " has-image" : ""}`} style={cover ? `background-image:url('${cover}')` : undefined}>
+            <div class="lead-story-scrim"></div>
+            <div class="lead-story-top">
+              <span class={`live-badge${isLive || topStory.category === "Breaking" ? " is-live" : ""}`}>{topKicker}</span>
+              {topStory.featured && !isLive && <span class="featured-badge">Editor’s pick</span>}
+            </div>
+            <div class="lead-story-body">
+              <h2>{topStory.title}</h2>
+              {summary && <p>{summary}</p>}
+              <span class="lead-story-meta">
+                {topStory.author?.name && <span>{`By ${topStory.author.name}`}</span>}
+                {topStory.author?.name && <i>·</i>}
+                {topStory.publishedAt && <time datetime={iso(topStory.publishedAt)}>{timeLabel(topStory.publishedAt)}</time>}
+                <b aria-hidden="true">↗</b>
+              </span>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      {railStories.length > 0 && (
+        <div class="story-rail" aria-label="Top stories">
+          <div class="rail-head">
+            <span>Top stories</span>
+            <span>{editionDate}</span>
+          </div>
+          <ol class="rail-list">
+            {railStories.map((s) => (
+              <li>
+                <a class="rail-item" href={`/story/${s.slug}`}>
+                  {s.coverImage?.asset ? (
+                    <span class="rail-thumb" style={`background-image:url('${urlFor(s.coverImage)}')`} aria-hidden="true"></span>
+                  ) : (
+                    <span class="rail-thumb rail-thumb-type" aria-hidden="true">
+                      {(s.category || "NM").slice(0, 2).toUpperCase()}
+                    </span>
+                  )}
+                  <span class="rail-text">
+                    <span class="rail-kicker">
+                      {s.isLive && <i class="live-dot" aria-hidden="true"></i>}
+                      {s.category}
+                      {s.publishedAt && <span>{` · ${timeLabel(s.publishedAt)}`}</span>}
+                    </span>
+                    <span class="rail-title">{s.title}</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ol>
+          <div class="rail-desk">
+            <span>Reporting from</span>
+            <span class="rail-desks">
+              {railDesks.map((d) => (
+                <span>{d}</span>
+              ))}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+
+    {tableStories.length > 0 && (
+      <div class="story-table" aria-label="More stories">
+        <div class="story-table-head">
+          <span>More from the newsroom</span>
+          <a href="#stories">All stories ↗</a>
+        </div>
+        <ul>
+          {tableStories.map((s) => (
+            <li>
+              <a href={`/story/${s.slug}`}>
+                <span class="table-time">
+                  <time datetime={iso(s.publishedAt)}>{timeLabel(s.publishedAt)}</time>
+                </span>
+                <span class="table-title">{s.title}</span>
+                <span class="table-desk">{s.category}</span>
+                <b aria-hidden="true">↗</b>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </section>
+)}

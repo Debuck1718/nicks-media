@@ -2,11 +2,15 @@ import { defineConfig } from "astro/config";
 import vercel from "@astrojs/vercel";
 
 // Hybrid rendering (Astro 5): output "static" with per-route opt-out.
-//   - Homepage, /privacy, /404 are pre-rendered to static HTML at build time
-//     and served from the CDN (the default).
-//   - /story/[slug] sets `export const prerender = false` so it renders on
-//     demand, letting draft preview read content that did not exist at build.
-// The Vercel adapter deploys only the dynamic route as a function.
+//   - /privacy and /404 are pre-rendered to static HTML at build time.
+//   - /story/[slug], /, /sitemap.xml and /rss.xml set `prerender = false` so
+//     they render on demand: a story published in the Studio appears on the
+//     site, the sitemap and the feed without a rebuild.
+// The Vercel adapter deploys those routes as functions.
+//
+// `site` is the canonical origin, used for canonical links, Open Graph URLs
+// and the sitemap, so it must be the domain the site is served from in
+// production (the same domain configured in Vercel).
 export default defineConfig({
   site: "https://nicksmedia.com",
   output: "static",

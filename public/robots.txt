@@ -5,4 +5,8 @@ Allow: /
 # endpoint live elsewhere; /api/reports is POST-only and returns no content.
 Disallow: /api/
 
+# Story pages accept ?preview=<secret>. Those URLs render unpublished drafts,
+# so keep crawlers away from any query string on this host.
+Disallow: /*?preview=
+
 Sitemap: https://nicksmedia.com/sitemap.xml
